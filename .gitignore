@@ -1,6 +1,10 @@
+<<<<<<< HEAD
+node_modules/
+=======
 *.zip
 __pycache__/
 .env
 .terraform/
 *.tfstate
 *.tfstate.*
+>>>>>>> refs/heads/main
