@@ -1,0 +1,13 @@
+config {
+  type: "table",
+  schema: "silver",
+  tags: ["trends"]
+}
+
+SELECT
+  DATE(date) AS date,
+  SAFE_CAST(interest AS INT64) AS interest,
+  TRIM(LOWER(search_term)) AS search_term
+FROM `adtrends-insight.raw.google_trends`
+WHERE
+  date IS NOT NULL AND interest IS NOT NULL
