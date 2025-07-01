@@ -85,3 +85,7 @@ Integrar sinais sociais (Twitter, notícias) para enriquecer a análise de conte
 Mesmo com as limitações naturais de acesso a dados proprietários, consegui construir uma solução técnica robusta, escalável e com potencial analítico real. O projeto mostra que engenharia de dados e análise de marketing podem caminhar juntas para gerar valor de negócio e inteligência de mercado.
 
 Esse projeto vai além de um exercício técnico: ele demonstra a minha capacidade de investigar, construir e transformar dados em respostas concretas, mesmo com desafios e dados públicos 
+
+##  Imagem que rankeia as campanhas que mais tiveram impacto real nas buscas pelo termo no google
+
+![Imagem que rankeia as campanhas que mais tiveram impacto real nas buscas pelo termo no google](image.png)
