@@ -1,0 +1,17 @@
+config {
+  type: "table",
+  schema: "silver",
+  tags: ["facebook_ads"]
+}
+
+SELECT
+  id,
+  page_id,
+  ad_snapshot_url,
+  PARSE_DATE('%Y-%m-%d', ad_delivery_start_time) AS start_date,
+  PARSE_DATE('%Y-%m-%d', ad_delivery_stop_time) AS end_date,
+  DATE_DIFF(
+    PARSE_DATE('%Y-%m-%d', ad_delivery_stop_time),
+    PARSE_DATE('%Y-%m-%d', ad_delivery_start_time)
+  ) AS duration_days
+FROM {{ ref("facebook_ads") }}
