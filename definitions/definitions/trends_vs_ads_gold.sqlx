@@ -7,13 +7,13 @@ config {
 SELECT
   fa.start_date AS date,
   fa.search_term,
+  fa.spend,
   gt.interest AS search_interest
 FROM
   ${ref("facebook_ads_clean")} AS fa
 LEFT JOIN
   ${ref("google_trends_clean")} AS gt
-ON
-  fa.start_date = gt.date
-  AND LOWER(fa.search_term) = gt.search_term
+  ON fa.start_date = gt.date
+  AND TRIM(LOWER(fa.search_term)) = TRIM(LOWER(gt.search_term))
 WHERE
   fa.search_term IS NOT NULL
