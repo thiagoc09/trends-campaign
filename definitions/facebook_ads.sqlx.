@@ -1,0 +1,6 @@
+config {
+  type: "table",
+  schema: "raw"
+}
+
+SELECT * FROM `adtrends-insight.raw.facebook_ads`

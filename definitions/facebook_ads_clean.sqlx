@@ -14,4 +14,4 @@ SELECT
     PARSE_DATE('%Y-%m-%d', ad_delivery_stop_time),
     PARSE_DATE('%Y-%m-%d', ad_delivery_start_time)
   ) AS duration_days
-FROM  ref("facebook_ads") 
+FROM {{ ref("raw", "facebook_ads") }}
