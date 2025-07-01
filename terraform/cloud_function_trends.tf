@@ -1,21 +1,21 @@
 resource "google_storage_bucket_object" "trends_function_zip" {
-  name   = "google_trends_function.zip"
+  name   = "google_trends_function_v2.zip"
   bucket = google_storage_bucket.data_bucket.name
-  source = "${path.module}/../cloud_functions/google_trends/function.zip"
+  source = "../cloud_functions/google_trends/function_v2.zip"
 }
 
 resource "google_cloudfunctions_function" "google_trends" {
   name        = "fetchGoogleTrends"
-  description = "Função para coletar Google Trends por termo"
+  entry_point = "main"
   runtime     = "python310"
-  available_memory_mb = 256
-  timeout     = 60
+  region      = var.region
 
   source_archive_bucket = google_storage_bucket.data_bucket.name
   source_archive_object = google_storage_bucket_object.trends_function_zip.name
-  entry_point = "main"
+
   trigger_http = true
-  region = var.region
+  available_memory_mb = 256
+  timeout = 60
 
   environment_variables = {
     SEARCH_TERM = var.search_term

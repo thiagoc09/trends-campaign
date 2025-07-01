@@ -5,19 +5,21 @@ resource "google_storage_bucket" "data_bucket" {
 }
 
 resource "google_bigquery_table" "facebook_ads" {
-  dataset_id = "raw"
-  table_id   = "facebook_ads"
+  dataset_id          = "raw"
+  table_id            = "facebook_ads"
   deletion_protection = false
 
   external_data_configuration {
-    autodetect = true
     source_format = "NEWLINE_DELIMITED_JSON"
-    
-
+    autodetect    = true
     source_uris = [
       "gs://${google_storage_bucket.data_bucket.name}/facebook_ads/*.json"
     ]
   }
+
+  depends_on = [
+    google_bigquery_dataset.raw
+  ]
 }
 
 resource "google_bigquery_dataset" "raw" {
