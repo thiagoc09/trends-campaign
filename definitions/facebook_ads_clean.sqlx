@@ -10,8 +10,5 @@ SELECT
   ad_snapshot_url,
   ad_delivery_start_time AS start_date,
   ad_delivery_stop_time AS end_date,
-  DATE_DIFF(
-    PARSE_DATE('%Y-%m-%d', ad_delivery_stop_time),
-    PARSE_DATE('%Y-%m-%d', ad_delivery_start_time)
-  ) AS duration_days
-FROM `adtrends-insight.raw.facebook_ads`  -- ou o caminho exato da tabela original
+  DATE_DIFF(ad_delivery_stop_time, ad_delivery_start_time, DAY) AS duration_days
+FROM `adtrends-insight.raw.facebook_ads`
