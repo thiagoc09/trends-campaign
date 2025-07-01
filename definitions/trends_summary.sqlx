@@ -1,0 +1,19 @@
+config {
+  type: "table",
+  schema: "gold",
+  description: "Resumo de volume de anúncios e interesse orgânico por termo e data"
+}
+
+SELECT 
+  fa.start_date AS date,
+  fa.search_term,
+  COUNT(*) AS ads_count,
+  AVG(fa.duration_days) AS avg_duration,
+  MAX(fa.ad_snapshot_url) AS top_ad_url,
+  gt.interest
+FROM ${ref("facebook_ads_clean")} fa
+LEFT JOIN ${ref("google_trends_clean")} gt
+  ON fa.start_date = gt.date
+  AND LOWER(fa.search_term) = LOWER(gt.search_term)
+WHERE fa.start_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 60 DAY)
+GROUP BY 1, 2, 6
