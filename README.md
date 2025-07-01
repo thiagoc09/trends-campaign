@@ -1,141 +1,87 @@
-# adtrends-campaign
+# Projeto AdTrends Insight
+Este projeto tem como objetivo investigar o impacto de campanhas de mídia paga no aumento do interesse orgânico do público, usando dados da Facebook Ads Library API e do Google Trends. A análise foca em entender se determinados anúncios promovem picos de busca pelos termos anunciados, e se isso varia de acordo com o tema ou narrativa da campanha.
 
-Este projeto cruza dados públicos de anúncios ativos da **Facebook Ads Library** com o interesse orgânico do **Google Trends**, permitindo identificar padrões entre investimento em mídia paga e intenção de busca em termos como "Nike", "Adidas", entre outros.
+## Motivação
+A ideia nasceu da pergunta: "Será que uma campanha publicitária aumenta o interesse real das pessoas pela marca?". Para responder isso, o projeto propõe cruzar dados de campanhas públicas da Meta com tendências de busca do Google, criando uma métrica clara de impacto.
 
-> 🔍 *A principal pergunta de negócio que o projeto responde é:*  
-> **"O aumento nos anúncios de uma marca está alinhado com picos de busca no Google?"**
+Meu foco inicial foi na marca Nike, mas a estrutura foi pensada para ser reutilizável e escalável para qualquer marca ou setor.
 
----
+## Stack Utilizada
+Google Cloud Platform (GCP)
 
-## Objetivos do Projeto
+Cloud Functions (Python)
 
-- Criar uma pipeline **100% serverless** e versionada, com foco em:
-  - Engenharia de dados.
-  - Marketing analytics.
-  - Integração entre dados de mídia paga e orgânica.
-- Explorar tecnologias modernas de cloud e orquestração de dados como:
-  - **Dataform** (modelagem no estilo dbt).
-  - **Terraform** (infraestrutura como código).
-  - **BigQuery** (armazenamento e análise).
-- Gerar uma tabela final `trends_summary` com cruzamentos úteis para tomada de decisão de marketing.
+Cloud Storage
 
----
+BigQuery
 
-## Arquitetura e Stack
+Terraform (Infraestrutura como código)
 
+Dataform (Modelagem de dados e criação da camada Gold)
 
-         ┌──────────────┐
-         │ Facebook Ads│
-         │   Library    │
-         └─────┬────────┘
-               │
-               ▼
-     [Cloud Function Python]
-               │
-     ▼ (JSON no Cloud Storage)
-               │
-     ▼ Ingestão no BigQuery (RAW)
-               │
-     ▼ Transformações com Dataform
-      ┌────────────┬────────────┐
-      │  silver    │   silver    │
-      │ facebook   │  trends     │
-      └────┬───────┴──────┬──────┘
-           ▼              ▼
-      LEFT JOIN por termo e data
-           ▼
-    `gold.trends_summary`
-           ▼
-   Visualização ou Exportação
+Python (extração de dados via APIs públicas)
 
----
+## O Que Foi Construído
+Pipelines de Coleta
+Cloud Function 1: coleta anúncios da Facebook Ads Library, filtrando por termos relacionados à marca.
 
-## 🧱 Camadas e Modelagem
+Cloud Function 2: coleta dados do Google Trends com os mesmos termos.
 
-- **Raw**: dados brutos vindos das APIs (Facebook Ads e Google Trends).
-- **Silver**: limpeza, normalização de nomes e estruturação por termo, data, duração e URL do anúncio.
-- **Gold**: cruzamento final com agregações (volume de anúncios, interesse médio, duração média, criativo de destaque).
+Os dados são armazenados no Cloud Storage como JSONs e ingeridos no BigQuery via tabelas externas.
 
-Tabela final `gold.trends_summary` contém:
+Camadas de Modelagem no Dataform
+Bronze: dados brutos (JSONs).
 
-| Campo         | Descrição                             |
-|---------------|----------------------------------------|
-| date          | Data da análise                        |
-| search_term   | Termo pesquisado (ex: Nike)            |
-| ads_count     | Nº de anúncios ativos no período       |
-| avg_duration  | Duração média das campanhas            |
-| top_ad_url    | Link do criativo mais recente          |
-| interest      | Nível de interesse do Google Trends    |
+Silver: limpeza e padronização.
 
----
+Gold: criação de métricas comparativas, como:
 
-## 🚀 Por que Dataform?
+Média de interesse orgânico antes e depois do início de uma campanha.
 
-- Permite versionar os modelos SQL com `Git`.
-- Define camadas (silver, gold) com dependências explícitas.
-- Facilita testes, execução incremental e organização modular.
-- Substituto moderno ao dbt dentro do GCP.
+Cálculo do impact rate.
 
-## 🌍 Por que Terraform?
+Indicador binário de impacto positivo.
 
-- Provisiona toda a estrutura de forma automatizada:
-- Tabelas, datasets, funções, secrets, permissões.
-- Permite reuso do projeto por outras equipes ou tópicos (ex: substituir "Nike" por "Coca-Cola").
-- Evita erros manuais e garante reprodutibilidade.
+## Insight Estratégico
+Durante o projeto, descobri que as campanhas com maior impacto orgânico da palavra "Nike" não estavam ligadas diretamente à própria marca, mas sim à camisa vermelha da Seleção Brasileira, um tema que gerou repercussão política e social.
 
----
+Isso revelou que o aumento nas buscas não foi consequência de campanhas institucionais tradicionais, mas de narrativas externas que geraram atenção pública.
 
-## ⚠️ Desafios encontrados
+## Por que foi necessário usar APIs públicas
+A API oficial do Facebook Ads requer acesso restrito, com permissões específicas para contas de anunciantes. Sem essa permissão, optei por explorar a Facebook Ads Library, que oferece dados públicos de anúncios ativos, embora com algumas limitações de granularidade e autenticidade das campanhas.
 
-- A **Facebook Ads Library** tem limitações: não oferece valores de investimento nem quantidade total de impressões.
-- Necessário criar lógica para calcular o volume de anúncios por data e termo.
-- Integração com Dataform e Git exigiu configuração de token com permissões de escrita.
-- Algumas APIs têm limites de data ou requisições por minuto — foi necessário tratar isso.
+Apesar disso, consegui construir um pipeline funcional e confiável, utilizando somente dados públicos.
 
----
+## Desafios Superados
+Configuração da conta gratuita no GCP, com controle de billing e permissões.
 
-## 📈 Resultados e próximos passos
+Setup do Terraform: criação e gerenciamento das funções em Cloud Functions com infraestrutura como código.
 
-A tabela final já permite:
+Integração com o Dataform: estruturação de schemas, configuração de repositórios Git, segredos e permissões.
 
-- Ver **quais termos** tiveram campanhas em andamento.
-- Ver **quando** o interesse orgânico subiu ou caiu.
-- Cruzar criativos com intenção de busca.
+Criação de funções Python desacopladas e reutilizáveis, preparadas para escalabilidade.
 
-Próximos passos possíveis:
+Ajuste de autenticação e políticas do Service Account para acessar segredos e recursos.
 
-- Adicionar novos termos no Terraform (`terraform.tfvars`).
-- Criar dashboard em Looker Studio ou Streamlit.
-- Incorporar análise de sentimento dos anúncios via NLP.
-- Automatizar coleta diária.
+## Aprendizados Técnicos
+Estruturar um projeto de ponta a ponta no GCP.
 
----
+Aprofundei conhecimentos em Terraform, Dataform e deploy automatizado com Git.
 
-## 🧠 Aprendizados
+Refinei minha habilidade de resolver problemas de permissão, autenticação e dependência entre recursos.
 
-Este projeto foi uma excelente forma de unir:
-- Engenharia de dados (ETL, camadas, modelagem).
-- Estratégia de marketing digital (ads + comportamento).
-- Boas práticas de infraestrutura com Terraform.
-- Stack moderna 100% GCP-friendly (Dataform + BigQuery + Cloud Functions).
+Desenvolvi raciocínio analítico para tirar insights de comportamento a partir de dados públicos.
 
----
+##  Próximos Passos
+Criar uma visualização interativa dos dados com Looker Studio ou Streamlit.
 
-## 📂 Organização dos arquivos
+Aprimorar o modelo para detectar campanhas que geram buzz mesmo fora da marca principal.
 
-| Pasta/Arquivo               | Descrição                                    |
-|----------------------------|-----------------------------------------------|
-| `cloud_functions/`         | Script Python de ingestão de dados da API     |
-| `definitions/`             | Modelos Dataform SQL (`silver`, `gold`)       |
-| `includes/`                | Parâmetros e helpers                          |
-| `terraform/`               | Scripts de infraestrutura                     |
-| `terraform.tfvars`         | Termos buscados, parâmetros do projeto        |
-| `README.md`                | Este arquivo                                  |
+Estender a análise para outros termos de busca e segmentos, como saúde, alimentação, imóveis ou política.
 
----
+Integrar sinais sociais (Twitter, notícias) para enriquecer a análise de contexto.
 
-## 🤝 Autor
+## Conclusão
+Mesmo com as limitações naturais de acesso a dados proprietários, consegui construir uma solução técnica robusta, escalável e com potencial analítico real. O projeto mostra que engenharia de dados e análise de marketing podem caminhar juntas para gerar valor de negócio e inteligência de mercado.
 
-**Thiago Araújo**  
-Engenheiro de Dados | Marketing Analytics | GCP & Python  
-[linkedin.com/in/thiagoc09](https://linkedin.com/in/thiagoc09)
+Esse projeto vai além de um exercício técnico: ele demonstra a minha capacidade de investigar, construir e transformar dados em respostas concretas, mesmo com desafios e dados públicos 
