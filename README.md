@@ -22,14 +22,14 @@ Dataform (Modelagem de dados e criação da camada Gold)
 Python (extração de dados via APIs públicas)
 
 ## O Que Foi Construído
-Pipelines de Coleta
+## Pipelines de Coleta
 Cloud Function 1: coleta anúncios da Facebook Ads Library, filtrando por termos relacionados à marca.
 
 Cloud Function 2: coleta dados do Google Trends com os mesmos termos.
 
 Os dados são armazenados no Cloud Storage como JSONs e ingeridos no BigQuery via tabelas externas.
 
-Camadas de Modelagem no Dataform
+## Camadas de Modelagem no Dataform
 Bronze: dados brutos (JSONs).
 
 Silver: limpeza e padronização.
@@ -79,12 +79,9 @@ Aprimorar o modelo para detectar campanhas que geram buzz mesmo fora da marca pr
 
 Estender a análise para outros termos de busca e segmentos, como saúde, alimentação, imóveis ou política.
 
-Integrar sinais sociais (Twitter, notícias) para enriquecer a análise de contexto.
-
 ## Conclusão
 Mesmo com as limitações naturais de acesso a dados proprietários, consegui construir uma solução técnica robusta, escalável e com potencial analítico real. O projeto mostra que engenharia de dados e análise de marketing podem caminhar juntas para gerar valor de negócio e inteligência de mercado.
 
-Esse projeto vai além de um exercício técnico: ele demonstra a minha capacidade de investigar, construir e transformar dados em respostas concretas, mesmo com desafios e dados públicos 
 
 ##  Imagem que rankeia as campanhas que mais tiveram impacto real nas buscas pelo termo no google
 
